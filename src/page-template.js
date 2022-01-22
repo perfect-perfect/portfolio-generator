@@ -51,5 +51,5 @@ const generatePage = (nombre, github) => {
 };
 
 // in order to use functions from one module inside another, we use the related statements module.exports and require.
-// in the source file that has the functions we want to make available to other files, we use module.export. at the top of the destination file we put require
+// in the source file that has the functions we want to make available to other files, we use module.exports. at the top of the destination file we put require
 module.exports = generatePage;
