@@ -3,11 +3,11 @@ const inquirer = require('inquirer');
 // this is required to run the fs module. it allows the app.js file to access the fs module's functions through the fs assignment
 // when ever we use a module we need to have a require. We can create and use local modules as well. 
 
-// const fs = require('fs');
+const fs = require('fs');
 
 // with this statemen, the object in the module.exports assignment will be reassigned to the generatePage variable in the app.js file. We use a relative path to get to file.
-
-// const generatePage = require('./src/page-template');
+// this expression assigns the anonymous HTML template function in page-template.js to the variable generatePage.
+const generatePage = require('./src/page-template');
 
 // const pageHTML = generatePage(nombre, github);
 
@@ -237,14 +237,88 @@ const promptProject = portfolioData => {
 // here we're calling a function that returns the result of inquire.prompt, which is a promise. We therefore append to .then() mothod to the function call.  the then() makes it so now we work with the information.
 // using promises we can chain the functions together using then() method
 // by chaining the function call to the then() method, we can control the sequence of the applications control flow. we only want to prompt users with the project questions after the profile questions
+
+
+// promptUser()
+//     // a promise chain is a series of functions that return promises, allowing us to attach .then() methods to one another.
+//     .then(promptProject)
+//     .then(portfolioData => {
+//         // expression that invokes the generatePage() with portfolioData and uses the result from our inquirer prompts as an argument called portfolioData.
+//         const pageHTML = generatePage(portfolioData);
+
+//         fs.writeFile('./dist/index.html', pageHTML, err => {
+//             if (err) {
+//                 console.log(err);
+//                 return;
+//             }
+//             console.log('Page created! Check out index.html in this directory to see it!');
+//             // essentially we wait for confirmation that html has been written before we copy the css file.
+//             fs.copyFile('./src/style.css', './dist/style.css', err => {
+//                 if (err) {
+//                     console.log(err);
+//                     return;
+//                 }
+//                 console.log('Style sheet copied succesfully!');
+//             });
+//         });
+
+        
+
+//     });
+
 promptUser()
     .then(promptProject)
     .then(portfolioData => {
-        console.log(portfolioData);
+        return generatePage(portfolioData);
+    })
+    .then(pageHTML => {
+        return writeFile(pageHTML);
+    })
+    .then(writeFileResponse => {
+        console.log(writeFileResponse);
+        return copyFile();
+    })
+    .then(copyFileResponse => {
+        console.log(copyFileResponse);
+    })
+    .catch(err => {
+        console.log(err);
     });
 
 
 
 
 
-// in javascript we can store an object inside another object or array.
+// // in javascript we can store an object inside another object or array.
+
+// as previously mentioned, callback functions and Promises are two ways to handle a synchronous code in JavaScript. 
+
+// we've used callback functions in the following ways
+// 1. browser event handling, such as clicks, form submissions, and change events
+// 2. Timers like setTimeout and SetInterval, where we instruct the code to execute a function after a certain amount of time or on a schedule
+// 3. the fs library methods, when we instruct the computer to work with the file system in some way, and when its done it executes a function we provide to let us know how it went
+
+// We've used Promises as follows:
+// 1. HTTP requests using the browser's fetch() functionality (once to make the request and get a response and then again to convert the response data to JSON Formant)
+// 2. inquirer, which packages up user answers into an object and returns it into the function we included in in the then()method
+
+// example of a callback function and a Promised-based function:
+
+// asynchronous functionality using a callback function
+// fs.writeFile('filename.txt', 'content for file', function(err) {
+//     // this is the callback function that executes after the file is done being written    
+// })
+
+// // asynchronous functionality using Promises
+// fetch('https://api.github.com/users/lernantino/repos')
+//     .then(function(response) {
+//         return response.json();
+//     })
+//     .then(function(githubData) {
+//         console.log(githubData);
+//     });
+
+// Create the First Promise
+// create a utils folder and a generate-site.js inside the folder
+// we're calling it utils because the functionality really has nothing to do with the app's main functionality but rather with utilities we use to get the app working.
+// let's begin to port all of the fs functionality that's currently used in app.js over to it.
