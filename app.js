@@ -1,9 +1,18 @@
+
+// this will import the exported object generate-site.js, allowing us to use generateSite.writeFile() and generateSite.copyFile().
+// now we can export and import multiple sets of functionality or data between files. 
+// maybe we simplyfy this, though, using object destructuring, which we saw earlier
+// const generateSite = require('./utils/generate-site.js');
+// because we exported an object from generate-site.js, we can use object destructuring to crete variables out of those properties instead of having to us dot notation.
+// this is not necessary, but is nice then having to use 'objectName.methodName()' to run the functionality
+const { writeFile, copyFile } = require('./utils/generate-site.js');
+
 const inquirer = require('inquirer');
 
 // this is required to run the fs module. it allows the app.js file to access the fs module's functions through the fs assignment
 // when ever we use a module we need to have a require. We can create and use local modules as well. 
 
-const fs = require('fs');
+// const fs = require('fs');
 
 // with this statemen, the object in the module.exports assignment will be reassigned to the generatePage variable in the app.js file. We use a relative path to get to file.
 // this expression assigns the anonymous HTML template function in page-template.js to the variable generatePage.
@@ -266,18 +275,29 @@ const promptProject = portfolioData => {
 
 //     });
 
+// look at how much cleaner then the example above. There are no morecallback functions happening inside of callback functions, 
+// all the asynchronous functinality is now Promise-based and we can continue to return the seperate functions output into the next .then() method.
+/// now we only need to write one .catch() method to handle any error that may occur with any of of the project bassed functions. If we need to execute a Promise's reject() function, it'll just jump right to the .catch() method.
+// we'll start by asking the user for therin infrmation with inquirer prompts. this is the promptUser() function
 promptUser()
+    // the promptProject() function captures the returing data from promptUser.
+    // and we recursively call promptProject() for as many projects as the user wants to add
+    // each project will be pushed into projects array in the collection of portfolio information, and when we're done, the final set of data is returned to the next .then().
     .then(promptProject)
+    // the finished portfolio data object is returned as portfolioData and sent iinto the generatePage() function, which will the finished HTML template code into pageHTML.
     .then(portfolioData => {
         return generatePage(portfolioData);
     })
+    // we pass pageHTML into the newly created writeFile() function, which returns a promise. This is why we use return here, so the Promise is returned into the next .then() method
     .then(pageHTML => {
         return writeFile(pageHTML);
     })
+    // upon a succesful file creation, we take the writeFileResponse object provided by the writeFile() functions resolve() exectuion to log it and then we return copyFile()
     .then(writeFileResponse => {
         console.log(writeFileResponse);
         return copyFile();
     })
+    // the Promise returned by copyFile then lets us know if the CSS file was copied correctly, and if so we're all done.
     .then(copyFileResponse => {
         console.log(copyFileResponse);
     })
