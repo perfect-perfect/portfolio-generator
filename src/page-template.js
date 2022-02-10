@@ -78,9 +78,7 @@ const generateProjects = projectsArr => {
         <section class="my-3" id="portfolio">
             <h2 class="text-dark bg-primary p-2 display-inline-block">Work</h2>
             <div class="flex-row justify-space-between">
-            ${projectsArr
-                .filter(({ feature }) => feature)
-                .map(({ name, description, languages, link }) => {
+            ${projectsArr.map(({ name, description, languages, link }) => {
                     return `
                     <div class="col-12 mb-2 bg-dark text-light p-3">
                         <h3 class="porfolio-item-title text-light">${name}</h3>

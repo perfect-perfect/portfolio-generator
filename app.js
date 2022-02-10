@@ -286,6 +286,7 @@ promptUser()
     .then(promptProject)
     // the finished portfolio data object is returned as portfolioData and sent iinto the generatePage() function, which will the finished HTML template code into pageHTML.
     .then(portfolioData => {
+        // generatePage goes to page-template that creats the template literal
         return generatePage(portfolioData);
     })
     // we pass pageHTML into the newly created writeFile() function, which returns a promise. This is why we use return here, so the Promise is returned into the next .then() method
